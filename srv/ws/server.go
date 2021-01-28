@@ -2,7 +2,7 @@ package ws
 
 import (
 	"gateway/constants"
-	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
@@ -15,8 +15,8 @@ func (s *Server) Start() {
 }
 
 func (s *Server) Run() {
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		serveWs(s.hub, w, r)
+	constants.HttpServer.GET("/ws", func(c *gin.Context) {
+		serveWs(s.hub, c.Writer, c.Request)
 	})
 }
 

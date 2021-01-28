@@ -6,7 +6,6 @@ import (
 	"gateway/srv/api"
 	"gateway/srv/ws"
 	"log"
-	"net/http"
 )
 
 var addr = flag.String("addr", ":8080", "api service address")
@@ -28,7 +27,7 @@ func main() {
 	}
 
 	log.Println("ListenAndServe: ", *addr)
-	err := http.ListenAndServe(*addr, nil)
+	err := constants.HttpServer.Run(*addr)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
