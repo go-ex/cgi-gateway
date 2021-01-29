@@ -5,9 +5,10 @@ import "gateway/constants"
 type app struct {
 }
 
-func init() {
-	app := &app{}
+func NewController() {
+	controller := &app{}
 
-	constants.HttpServer.GET("/app/add", app.add)
-	constants.HttpServer.GET("/app/get", app.get)
+	constants.Router.GET("/app/add", controller.add)
+	constants.Router.GET("/app/get", controller.get)
+	constants.Router.GET("/app", controller.index)
 }

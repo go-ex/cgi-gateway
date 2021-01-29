@@ -5,14 +5,28 @@ import (
 	"gateway/constants"
 	"gateway/srv/api"
 	"gateway/srv/ws"
+	"io/ioutil"
 	"log"
+	"os"
 )
 
-var addr = flag.String("addr", ":8080", "api service address")
+var addr = flag.String("addr", ":8080", "服务端口配置")
+var conf = flag.String("conf", "./config.json", "配置文件路径")
 
-func main() {
+func init() {
 	flag.Parse()
 
+	_, err := os.Stat(*conf)
+	if err == nil {
+		if os.IsNotExist(err) == false {
+			f, _ := os.Open(*conf)
+			str, _ := ioutil.ReadAll(f)
+			constants.NewConfig(str)
+		}
+	}
+}
+
+func main() {
 	servers := []constants.Server{
 		ws.NewWebsocketServer(),
 		api.NewHttpServer(),
@@ -23,11 +37,10 @@ func main() {
 	}
 
 	for _, server := range servers {
-		server.Run()
+		go server.Run()
 	}
 
-	log.Println("ListenAndServe: ", *addr)
-	err := constants.HttpServer.Run(*addr)
+	err := constants.Router.Run(*addr)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

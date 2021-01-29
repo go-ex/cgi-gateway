@@ -13,3 +13,7 @@ func AddAppAgent(app int, url string) {
 func GetAppAgent(app int) string {
 	return appAgent[app]
 }
+
+func GetAll() map[int]string {
+	return appAgent
+}
