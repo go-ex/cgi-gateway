@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type Server struct {
@@ -20,13 +21,16 @@ func (s *Server) Start() {
 	go s.hub.Run()
 
 	constants.Router.GET("/", func(c *gin.Context) {
+		// 确定app
+		app, _ := strconv.Atoi(c.DefaultQuery("app", "1"))
+
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		client := ws.NewClient(conn, GetEvent())
+		client := ws.NewClient(app, conn, GetEvent())
 		s.hub.Register(client)
 
 		// Allow collection of memory referenced by the caller by doing all work in

@@ -26,6 +26,8 @@ var (
 )
 
 type client struct {
+	app int
+
 	id hub.ConnectId
 
 	hub *hub.Hub
@@ -41,6 +43,10 @@ type client struct {
 
 func (c *client) Id() hub.ConnectId {
 	return c.id
+}
+
+func (c *client) App() int {
+	return c.app
 }
 
 func (c *client) Send(msg []byte) {
@@ -120,8 +126,9 @@ func (c *client) WritePump() {
 	}
 }
 
-func NewClient(conn *websocket.Conn, event Event) Client {
+func NewClient(app int, conn *websocket.Conn, event Event) Client {
 	return &client{
+		app:   app,
 		id:    createID(conn.RemoteAddr().String()),
 		conn:  conn,
 		hub:   hub.GetHub(),
