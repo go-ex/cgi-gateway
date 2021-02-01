@@ -1,78 +1,48 @@
 package ws
 
 import (
-	"bytes"
 	"gateway/constants"
 	"gateway/srv/ws/handler"
+	"gateway/srv/ws/transport"
 	"gateway/utils/json"
 	"gateway/utils/ws"
 	"log"
-	"net/http"
 )
 
 type event struct {
+	transport transport.Transport
 }
 
 func (e *event) OnConnect(client ws.Client) {
 	url := constants.GetAppAgent(client.App())
-
-	resp, err := http.Post(
-		url,
-		"application/json",
-		bytes.NewReader(json.StructToString(&handler.Connect{Event: 1})),
-	)
+	request := e.transport.NewRequest(url)
+	err := request.Call(json.StructToString(handler.NewConnect(client.Id())))
 
 	if err != nil {
 		log.Println(err)
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		log.Println("api 服务离线")
-		client.Send([]byte("{\"event\":0,\"msg\":\"服务离线\""))
+		handler.NotServer(client)
 	}
 }
 
 func (e *event) OnMessage(client ws.Client, message []byte) {
 	url := constants.GetAppAgent(client.App())
-
-	resp, err := http.Post(
-		url,
-		"application/json",
-		bytes.NewReader(message),
-	)
+	request := e.transport.NewRequest(url)
+	err := request.Call(message)
 
 	if err != nil {
 		log.Println(err)
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		log.Println("api 服务离线")
-		client.Send([]byte("{\"event\":0,\"msg\":\"服务离线\""))
+		handler.NotServer(client)
 	}
 }
 
 func (e *event) OnClose(client ws.Client) {
 	url := constants.GetAppAgent(client.App())
-
-	resp, err := http.Post(
-		url,
-		"application/json",
-		bytes.NewReader(json.StructToString(&handler.Close{Event: 3})),
-	)
+	request := e.transport.NewRequest(url)
+	err := request.Call(json.StructToString(handler.NewClose(client.Id())))
 
 	if err != nil {
 		log.Println(err)
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		log.Println("api 服务离线")
-		client.Send([]byte("{\"event\":0,\"msg\":\"服务离线\""))
+		handler.NotServer(client)
 	}
 }
 
@@ -84,7 +54,9 @@ var ev ws.Event
 
 func GetEvent() ws.Event {
 	if ev == nil {
-		ev = &event{}
+		ev = &event{
+			transport: transport.NewTransport(),
+		}
 	}
 	return ev
 }

@@ -1,5 +1,15 @@
 package handler
 
+import "gateway/utils/hub"
+
 type Connect struct {
-	Event int `json:"event"`
+	Fd    hub.ConnectId `json:"fd"`
+	Event int           `json:"event"`
+}
+
+func NewConnect(id hub.ConnectId) *Connect {
+	return &Connect{
+		Fd:    id,
+		Event: 1,
+	}
 }
