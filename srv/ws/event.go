@@ -27,7 +27,7 @@ func (e *event) OnConnect(client ws.Client) {
 func (e *event) OnMessage(client ws.Client, message []byte) {
 	url := constants.GetAppAgent(client.App())
 	request := e.transport.NewRequest(url)
-	err := request.Call(message)
+	err := request.Call(json.StructToString(handler.NewMessage(client.Id(), message)))
 
 	if err != nil {
 		log.Println(err)

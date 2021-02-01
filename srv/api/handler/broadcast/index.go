@@ -2,17 +2,21 @@ package broadcast
 
 import (
 	"gateway/utils/hub"
+	"gateway/utils/msg"
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/http"
 )
 
 // 广播所有
 func (receiver *broadcast) index(c *gin.Context) {
-	msg := c.PostForm("msg")
+	data := c.PostForm("msg")
 
-	if msg != "" {
-		hub.GetHub().SendAll([]byte(msg))
+	if data != "" {
+		hub.GetHub().SendAll([]byte(data))
 	} else {
-		log.Println(msg)
+		log.Println(data)
 	}
+
+	c.JSON(http.StatusOK, msg.Ok)
 }

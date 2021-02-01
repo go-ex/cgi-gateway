@@ -12,15 +12,6 @@ host:8080/  websocket提供服务端口
 
     ws://127.0.0.1:8080?app_id=1 
 
-
-
-## api
-
-
-host:8080/app 应用操作
-host:8080/config 配置显示
-host:8080/broadcast 广播所有
-
 # config
 
     {
@@ -31,3 +22,17 @@ host:8080/broadcast 广播所有
         }
       ]
     }
+
+
+## api
+host:8080/app               应用操作
+host:8080/app/add           应用操作
+host:8080/config            配置显示
+host:8080/broadcast         广播所有
+    {"msg":""}
+host:8080/ws/close   关闭指定连接
+    {"fd":""}
+host:8080/ws/send    发送信息
+    {"fd":"","msg":""}
+
+

@@ -11,7 +11,7 @@ import (
 )
 
 var addr = flag.String("addr", ":8080", "服务端口配置")
-var conf = flag.String("conf", "./config.json", "配置文件路径")
+var conf = flag.String("conf", "config.json", "配置文件路径")
 
 func init() {
 	flag.Parse()
@@ -22,7 +22,11 @@ func init() {
 			f, _ := os.Open(*conf)
 			str, _ := ioutil.ReadAll(f)
 			constants.NewConfig(str)
+
+			log.Printf("load config file %s\n", *conf)
 		}
+	} else {
+		log.Printf("无法加载配置文件 %s\n", *conf)
 	}
 }
 

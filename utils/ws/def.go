@@ -6,6 +6,7 @@ type Client interface {
 	App() int
 	Id() hub.ConnectId
 	Send([]byte)
+	Close()
 	WritePump()
 	ReadPump()
 }

@@ -53,6 +53,10 @@ func (c *client) Send(msg []byte) {
 	c.send <- msg
 }
 
+func (c *client) Close() {
+	_ = c.conn.Close()
+}
+
 // 接收并处理信息
 func (c *client) ReadPump() {
 	defer func() {

@@ -43,6 +43,22 @@ func (h *Hub) SendAll(msg []byte) {
 	h.broadcast <- msg
 }
 
+func (h *Hub) Send(id ConnectId, msg []byte) {
+	client, ok := h.clients[id]
+	if ok {
+		client.Send(msg)
+	}
+}
+
+func (h *Hub) Close(id ConnectId) {
+	client, ok := h.clients[id]
+	if ok {
+		client.Close()
+
+		delete(h.clients, client.Id())
+	}
+}
+
 func (h *Hub) Run() {
 	for {
 		select {
